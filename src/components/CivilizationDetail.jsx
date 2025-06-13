@@ -14,7 +14,7 @@ const CivilizationDetail = () => {
   useEffect(() => {
     const fetchCivilization = async () => {
       try {
-        const { data } = await axios.get(`/api/civilizations/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/civilizations/${id}`);
         setCivilization(data);
       } catch (err) {
         setError('Failed to fetch civilization');
@@ -27,7 +27,7 @@ const CivilizationDetail = () => {
   }, [id]);
 
   const handleEdit = () => {
-    navigate(`/civilizations/edit/${id}`);  // fixed route here
+    navigate(`/civilizations/edit/${id}`);
   };
 
   const handleDelete = async () => {
@@ -35,7 +35,7 @@ const CivilizationDetail = () => {
     if (!window.confirm('Delete this civilization?')) return;
 
     try {
-      await axios.delete(`/api/civilizations/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/civilizations/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('Civilization deleted');
@@ -54,7 +54,7 @@ const CivilizationDetail = () => {
       <h2>{civilization.name}</h2>
       {civilization.image && (
         <img
-          src={`/uploads/${civilization.image}`}
+          src={`${import.meta.env.VITE_API_URL}/uploads/${civilization.image}`}
           alt={civilization.name}
           style={{ width: '200px', height: 'auto' }}
         />

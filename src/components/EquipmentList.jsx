@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 
 function EquipmentList() {
   const [equipment, setEquipment] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/equipment')
+    fetch(`${API_URL}/api/equipment`)
       .then(res => res.json())
       .then(data => setEquipment(data))
       .catch(err => console.error('Error fetching equipment:', err));
-  }, []);
+  }, [API_URL]);
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
@@ -20,7 +21,7 @@ function EquipmentList() {
 
     if (window.confirm('Are you sure you want to delete this equipment?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/equipment/${id}`, {
+        const res = await fetch(`${API_URL}/api/equipment/${id}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +61,7 @@ function EquipmentList() {
             >
               {equip.image && (
                 <img
-                  src={`http://localhost:5000/uploads/${equip.image}`}
+                  src={`${API_URL}/uploads/${equip.image}`}
                   alt={equip.name}
                   style={{ width: '120px', borderRadius: '8px' }}
                 />

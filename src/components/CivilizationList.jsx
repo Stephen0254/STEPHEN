@@ -5,77 +5,95 @@ function CivilizationList() {
   const [civilizations, setCivilizations] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/civilizations')
+    fetch(`${import.meta.env.VITE_API_URL}/api/civilizations`)
       .then(res => res.json())
       .then(data => setCivilizations(data))
       .catch(err => console.error('Error fetching civilizations:', err));
   }, []);
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const storedUser = localStorage.getItem('user');
+    const user = storedUser ? JSON.parse(storedUser) : null;
+
+    if (!user || !user.token) {
       alert('You must be logged in as admin to delete.');
       return;
     }
 
-    if (window.confirm('Are you sure you want to delete this civilization?')) {
-      try {
-        const res = await fetch(`http://localhost:5000/api/civilizations/${id}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    const confirm = window.confirm('Are you sure you want to delete this civilization?');
+    if (!confirm) return;
 
-        if (res.ok) {
-          setCivilizations(prev => prev.filter(civ => civ._id !== id));
-        } else {
-          const errorData = await res.json();
-          console.error('Failed to delete civilization:', errorData.message || res.statusText);
-          alert(errorData.message || 'Delete failed');
-        }
-      } catch (err) {
-        console.error('Error deleting civilization:', err);
-        alert('An error occurred while deleting civilization.');
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/civilizations/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      if (res.ok) {
+        setCivilizations(prev => prev.filter(civ => civ._id !== id));
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message || 'Delete failed');
       }
+    } catch (err) {
+      console.error('Error deleting civilization:', err);
+      alert('An error occurred while deleting civilization.');
     }
   };
 
   return (
-    <div>
-      <h2>Civilizations</h2>
+    <div style={{ maxWidth: '1200px', margin: 'auto', padding: '20px' }}>
+      <h2 style={{ textAlign: 'center' }}>Civilizations</h2>
+
       {civilizations.length === 0 ? (
-        <p>No civilizations found.</p>
+        <p style={{ textAlign: 'center' }}>No civilizations found.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px',
+            marginTop: '20px',
+          }}
+        >
           {civilizations.map(civ => (
-            <li
+            <div
               key={civ._id}
               style={{
-                marginBottom: '20px',
                 border: '1px solid #ccc',
-                padding: '10px',
-                borderRadius: '8px',
+                borderRadius: '10px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                backgroundColor: '#fff',
               }}
             >
               {civ.image && (
                 <img
-                  src={`http://localhost:5000/uploads/${civ.image}`}
+                  src={`${import.meta.env.VITE_API_URL}${civ.image}`}
                   alt={civ.name}
-                  style={{ width: '120px', borderRadius: '8px' }}
+                  style={{ width: '100%', height: '180px', objectFit: 'cover' }}
                 />
               )}
-              <h3>{civ.name}</h3>
-              <p>{civ.description}</p>
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <div style={{ padding: '10px' }}>
+                <h3>{civ.name}</h3>
+                <p>{civ.description}</p>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-around', padding: '10px' }}>
                 <button
                   onClick={() => handleDelete(civ._id)}
                   style={{
-                    backgroundColor: 'red',
-                    color: 'white',
-                    border: 'none',
                     padding: '6px 12px',
+                    backgroundColor: '#dc3545',
+                    color: '#fff',
+                    border: 'none',
                     borderRadius: '4px',
+                    cursor: 'pointer',
                   }}
                 >
                   Delete
@@ -83,20 +101,21 @@ function CivilizationList() {
                 <Link to={`/civilizations/edit/${civ._id}`}>
                   <button
                     style={{
+                      padding: '6px 12px',
                       backgroundColor: '#007bff',
                       color: 'white',
                       border: 'none',
-                      padding: '6px 12px',
                       borderRadius: '4px',
+                      cursor: 'pointer',
                     }}
                   >
                     Edit
                   </button>
                 </Link>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

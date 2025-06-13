@@ -77,7 +77,7 @@ const Navbar = () => {
       `}</style>
 
       <nav className={`navbar ${darkMode ? 'dark' : 'light'}`}>
-        {/* Left: Main Nav */}
+        {/* Left: Main Navigation */}
         <div className="nav-links">
           {['/', '/characters', '/species', '/civilizations', '/weapons', '/equipment'].map((path, idx) => {
             const labels = ['Home', 'Characters', 'Species', 'Civilizations', 'Weapons', 'Equipment'];
@@ -89,15 +89,15 @@ const Navbar = () => {
           })}
         </div>
 
-        {/* Middle: Add Links */}
+        {/* Middle: Admin Add Links */}
         {user && (
           <div className="nav-links">
             {[
               { path: '/add-character', label: 'Add Character' },
-              { path: '/add-species', label: 'Add Species' },
-              { path: '/add-civilization', label: 'Add Civilization' },
-              { path: '/add-weapon', label: 'Add Weapon' },
-              { path: '/add-equipment', label: 'Add Equipment' },
+              { path: '/species/add', label: 'Add Species' },
+              { path: '/civilizations/add', label: 'Add Civilization' },
+              { path: '/weapons/add', label: 'Add Weapon' },
+              { path: '/equipment/add', label: 'Add Equipment' },
             ].map(({ path, label }) => (
               <Link key={path} to={path} className="nav-link">
                 {label}

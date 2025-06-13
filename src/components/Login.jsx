@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 function Login() {
@@ -8,6 +8,7 @@ function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,58 +16,81 @@ function Login() {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/users/login', {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/users/login`,
+        { email, password }
+      );
 
       const user = res.data;
 
-      // ✅ Save token and user in localStorage
       localStorage.setItem('token', user.token);
       localStorage.setItem('user', JSON.stringify(user));
       window.dispatchEvent(new Event('storage'));
 
-      // ✅ Navigate to profile or any authenticated page
-      navigate('/profile');
+      // Redirect to previous location or default to /profile
+      const redirectPath = location.state?.from || '/profile';
+      navigate(redirectPath);
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div style={{ maxWidth: '400px', margin: 'auto', padding: '2rem' }}>
+      <h2 style={{ textAlign: 'center' }}>Login</h2>
+
+      {error && (
+        <div style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Email:</label>
+        <div style={{ marginBottom: '1rem' }}>
+          <label htmlFor="email">Email:</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px' }}
+            autoComplete="email"
+            style={{ width: '100%', padding: '10px' }}
           />
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Password:</label>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <label htmlFor="password">Password:</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px' }}
+            autoComplete="current-password"
+            style={{ width: '100%', padding: '10px' }}
           />
         </div>
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: '100%',
+            padding: '10px',
+            backgroundColor: '#333',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
 
-      <p style={{ marginTop: '10px', textAlign: 'center' }}>
+      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
         Don't have an account? <Link to="/signup">Sign Up</Link>
       </p>
     </div>

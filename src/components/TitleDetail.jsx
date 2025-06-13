@@ -10,7 +10,7 @@ function TitleDetail() {
   useEffect(() => {
     async function fetchTitle() {
       try {
-        const res = await fetch(`/api/titles/${id}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/titles/${id}`);
         if (!res.ok) throw new Error('Failed to fetch title');
         const data = await res.json();
         setTitle(data);
@@ -31,7 +31,6 @@ function TitleDetail() {
     <div>
       <h2>{title.name}</h2>
       <p><strong>Description:</strong> {title.description}</p>
-      {/* Add more title details here */}
     </div>
   );
 }

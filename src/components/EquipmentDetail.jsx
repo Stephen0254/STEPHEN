@@ -14,7 +14,7 @@ const EquipmentDetail = () => {
   useEffect(() => {
     const fetchEquipment = async () => {
       try {
-        const { data } = await axios.get(`/api/equipment/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/equipment/${id}`);
         setEquipment(data);
       } catch (err) {
         setError('Failed to fetch equipment');
@@ -27,7 +27,7 @@ const EquipmentDetail = () => {
   }, [id]);
 
   const handleEdit = () => {
-    navigate(`/equipment/edit/${id}`);  // fixed route here
+    navigate(`/equipment/edit/${id}`);
   };
 
   const handleDelete = async () => {
@@ -35,7 +35,7 @@ const EquipmentDetail = () => {
     if (!window.confirm('Delete this equipment?')) return;
 
     try {
-      await axios.delete(`/api/equipment/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/equipment/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('Equipment deleted');
@@ -54,7 +54,7 @@ const EquipmentDetail = () => {
       <h2>{equipment.name}</h2>
       {equipment.image && (
         <img
-          src={`/uploads/${equipment.image}`}
+          src={`${import.meta.env.VITE_API_URL}/uploads/${equipment.image}`}
           alt={equipment.name}
           style={{ width: '200px', height: 'auto' }}
         />

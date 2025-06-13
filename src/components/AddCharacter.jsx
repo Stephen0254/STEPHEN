@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function AddCharacter() {
   const [name, setName] = useState('');
   const [role, setRole] = useState('Hero');
   const [image, setImage] = useState(null);
-  const [description, setDescription] = useState(''); // ✅ New state
+  const [description, setDescription] = useState('');
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -29,11 +31,11 @@ function AddCharacter() {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('role', role);
-    formData.append('description', description); // ✅ Add to formData
+    formData.append('description', description);
     formData.append('image', image);
 
     try {
-      const res = await fetch('http://localhost:5000/api/characters', {
+      const res = await fetch(`${API_URL}/api/characters`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -50,7 +52,7 @@ function AddCharacter() {
       setMessage('✅ Character added successfully!');
       setName('');
       setRole('Hero');
-      setDescription(''); // ✅ Reset description
+      setDescription('');
       setImage(null);
     } catch (error) {
       setMessage(error.message);

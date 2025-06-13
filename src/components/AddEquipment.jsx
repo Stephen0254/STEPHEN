@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const AddEquipment = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -30,7 +32,7 @@ const AddEquipment = () => {
     formData.append('image', image);
 
     try {
-      const res = await fetch('http://localhost:5000/api/equipment', {
+      const res = await fetch(`${API_URL}/api/equipment`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${user.token}`,

@@ -1,4 +1,3 @@
-// frontend/components/EditWeapon.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,7 +17,7 @@ function EditWeapon() {
   useEffect(() => {
     const fetchWeapon = async () => {
       try {
-        const res = await axios.get(`/api/weapons/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/weapons/${id}`);
         setFormData({
           name: res.data.name,
           description: res.data.description || '',
@@ -60,7 +59,7 @@ function EditWeapon() {
     }
 
     try {
-      await axios.put(`/api/weapons/${id}`, form, config);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/weapons/${id}`, form, config);
       navigate('/weapons');
     } catch (err) {
       console.error('Failed to update weapon:', err);

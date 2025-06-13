@@ -3,16 +3,25 @@ import { Link } from 'react-router-dom';
 
 function WeaponList() {
   const [weapons, setWeapons] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/weapons')
-      .then(res => res.json())
-      .then(data => setWeapons(data))
-      .catch(err => console.error('Error fetching weapons:', err));
-  }, []);
+    const fetchWeapons = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/weapons`);
+        const data = await res.json();
+        setWeapons(data);
+      } catch (err) {
+        console.error('Error fetching weapons:', err);
+      }
+    };
+
+    fetchWeapons();
+  }, [API_URL]);
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
+
     if (!token) {
       alert('You must be logged in as admin to delete.');
       return;
@@ -20,12 +29,13 @@ function WeaponList() {
 
     if (window.confirm('Are you sure you want to delete this weapon?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/weapons/${id}`, {
+        const res = await fetch(`${API_URL}/api/weapons/${id}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
         if (res.ok) {
           setWeapons(prev => prev.filter(w => w._id !== id));
         } else {
@@ -41,27 +51,29 @@ function WeaponList() {
   };
 
   return (
-    <div>
-      <h2>Weapons</h2>
+    <div style={{ maxWidth: '800px', margin: '20px auto', padding: '10px' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Weapons</h2>
+
       {weapons.length === 0 ? (
-        <p>No weapons found.</p>
+        <p style={{ textAlign: 'center' }}>No weapons found.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', padding: 0 }}>
           {weapons.map(weapon => (
             <li
               key={weapon._id}
               style={{
-                marginBottom: '20px',
                 border: '1px solid #ccc',
-                padding: '10px',
                 borderRadius: '8px',
+                padding: '10px',
+                listStyle: 'none',
+                backgroundColor: '#f9f9f9',
               }}
             >
               {weapon.image && (
                 <img
-                  src={`http://localhost:5000/uploads/${weapon.image}`}
+                  src={`${API_URL}/uploads/${weapon.image}`}
                   alt={weapon.name}
-                  style={{ width: '120px', borderRadius: '8px' }}
+                  style={{ width: '100%', borderRadius: '6px', marginBottom: '10px' }}
                 />
               )}
               <h3>{weapon.name}</h3>
@@ -75,6 +87,7 @@ function WeaponList() {
                     border: 'none',
                     padding: '6px 12px',
                     borderRadius: '4px',
+                    cursor: 'pointer',
                   }}
                 >
                   Delete
@@ -87,6 +100,7 @@ function WeaponList() {
                       border: 'none',
                       padding: '6px 12px',
                       borderRadius: '4px',
+                      cursor: 'pointer',
                     }}
                   >
                     Edit

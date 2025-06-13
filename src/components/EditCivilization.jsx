@@ -14,7 +14,7 @@ function EditCivilization() {
   useEffect(() => {
     const fetchCivilization = async () => {
       try {
-        const res = await fetch(`/api/civilizations/${id}`); // ✅ plural
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/civilizations/${id}`);
         if (!res.ok) throw new Error('Failed to fetch civilization');
         const data = await res.json();
         setCivilization(data);
@@ -38,7 +38,7 @@ function EditCivilization() {
     const token = localStorage.getItem('token');
 
     try {
-      const res = await fetch(`/api/civilizations/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/civilizations/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ function EditCivilization() {
         throw new Error(errData.message || 'Update failed');
       }
 
-      navigate('/civilizations'); // ✅ plural
+      navigate('/civilizations');
     } catch (err) {
       setMessage(err.message);
     }

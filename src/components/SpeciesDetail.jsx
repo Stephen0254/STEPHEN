@@ -14,7 +14,7 @@ const SpeciesDetail = () => {
   useEffect(() => {
     const fetchSpecies = async () => {
       try {
-        const { data } = await axios.get(`/api/species/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/species/${id}`);
         setSpecies(data);
       } catch (err) {
         setError('Failed to fetch species');
@@ -27,7 +27,7 @@ const SpeciesDetail = () => {
   }, [id]);
 
   const handleEdit = () => {
-    navigate(`/species/edit/${id}`); // ✅ Fixed route
+    navigate(`/species/edit/${id}`);
   };
 
   const handleDelete = async () => {
@@ -35,7 +35,7 @@ const SpeciesDetail = () => {
     if (!window.confirm('Delete this species?')) return;
 
     try {
-      await axios.delete(`/api/species/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/species/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('Species deleted');
@@ -54,7 +54,7 @@ const SpeciesDetail = () => {
       <h2>{species.name}</h2>
       {species.image && (
         <img
-          src={`/uploads/${species.image}`}
+          src={`${import.meta.env.VITE_API_URL}/uploads/${species.image}`}
           alt={species.name}
           style={{ width: '200px', height: 'auto' }}
         />

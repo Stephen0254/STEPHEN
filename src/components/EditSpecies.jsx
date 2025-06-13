@@ -14,7 +14,7 @@ function EditSpecies() {
   useEffect(() => {
     const fetchSpecies = async () => {
       try {
-        const res = await fetch(`/api/species/${id}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/species/${id}`);
         if (!res.ok) throw new Error('Failed to fetch species');
         const data = await res.json();
         setSpecies(data);
@@ -38,7 +38,7 @@ function EditSpecies() {
     const token = localStorage.getItem('token');
 
     try {
-      const res = await fetch(`/api/species/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/species/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

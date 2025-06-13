@@ -5,18 +5,26 @@ function UserProfile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState('');
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const token = user?.token;
+      let user = null;
+      try {
+        user = JSON.parse(localStorage.getItem('user'));
+      } catch {
+        setError('Invalid user data. Please log in again.');
+        return;
+      }
 
+      const token = user?.token;
       if (!token) {
-        setError('No token found. Please login again.');
+        setError('No token found. Please log in again.');
         return;
       }
 
       try {
-        const res = await axios.get('http://localhost:5000/api/users/profile', {
+        const res = await axios.get(`${API_URL}/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -28,7 +36,7 @@ function UserProfile() {
     };
 
     fetchProfile();
-  }, []);
+  }, [API_URL]);
 
   return (
     <div
@@ -45,19 +53,19 @@ function UserProfile() {
     >
       <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#111' }}>User Profile</h2>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
       {profile ? (
         <div style={{ fontSize: '16px', lineHeight: '1.6' }}>
           <p><strong>Username:</strong> {profile.username}</p>
           <p><strong>Email:</strong> {profile.email}</p>
           <p><strong>User ID:</strong> {profile._id}</p>
-          {profile.isAdmin !== undefined && (
+          {'isAdmin' in profile && (
             <p><strong>Role:</strong> {profile.isAdmin ? 'Admin' : 'User'}</p>
           )}
         </div>
       ) : (
-        !error && <p>Loading profile...</p>
+        !error && <p style={{ textAlign: 'center' }}>Loading profile...</p>
       )}
     </div>
   );

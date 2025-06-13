@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const AddWeapon = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -18,13 +20,18 @@ const AddWeapon = () => {
     formData.append('description', description);
     formData.append('image', image);
 
-    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user?.token;
+
+    if (!token) {
+      return setMessage('You must be logged in as an admin to add.');
+    }
 
     try {
       setLoading(true);
       setMessage('');
 
-      const res = await fetch('http://localhost:5000/api/weapons', {
+      const res = await fetch(`${API_URL}/api/weapons`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

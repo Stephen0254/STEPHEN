@@ -4,14 +4,12 @@ import './Home.css';
 
 const Home = () => {
   const [showIntro, setShowIntro] = useState(true);
-
-  const storedUser = localStorage.getItem('user');
-  const user = storedUser ? JSON.parse(storedUser) : null;
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowIntro(false);
-    }, 4000); // 4 seconds then hide intro
+    }, 4000); // Hide intro after 4 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -26,9 +24,12 @@ const Home = () => {
 
       <div className="home-background">
         <div className="home-overlay">
-          <div className="home-container">
+          <main className="home-container">
             <h1 className="home-title">Dream Comics Universe</h1>
-            <p className="home-subtitle">Enter a world of heroes, villains, and legends.</p>
+            <p className="home-subtitle">
+              Enter a world of heroes, villains, and legends.
+            </p>
+
             {!user && (
               <div className="home-button-container">
                 <Link to="/login">
@@ -39,7 +40,7 @@ const Home = () => {
                 </Link>
               </div>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>

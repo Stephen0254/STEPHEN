@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function EditCharacter() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -16,11 +18,10 @@ function EditCharacter() {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/characters/${id}`);
+        const response = await fetch(`${API_BASE}/api/characters/${id}`);
         if (!response.ok) throw new Error('Failed to fetch character');
         const data = await response.json();
 
-        // Set form fields with existing character data
         setName(data.name || '');
         setRole(data.role || 'Hero');
         setDescription(data.description || '');
@@ -48,13 +49,13 @@ function EditCharacter() {
     const storedUser = localStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
 
-    if (!user || !user.token) {
+    if (!user?.token) {
       setMessage('Unauthorized. Please log in as Admin.');
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/characters/${id}`, {
+      const response = await fetch(`${API_BASE}/api/characters/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -68,7 +69,7 @@ function EditCharacter() {
       }
 
       setMessage('Character updated successfully!');
-      setTimeout(() => navigate('/'), 2000); // ✅ Delay redirect to show message
+      setTimeout(() => navigate('/'), 2000);
     } catch (error) {
       setMessage(error.message);
     }
@@ -87,6 +88,7 @@ function EditCharacter() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            autoFocus
             style={{ width: '100%', padding: '10px' }}
           />
         </div>
@@ -126,8 +128,8 @@ function EditCharacter() {
             <div style={{ marginTop: '10px' }}>
               <p>Current image:</p>
               <img
-                src={`http://localhost:5000/uploads/${existingImage}`}
-                alt="Character"
+                src={`${API_BASE}/uploads/${existingImage}`}
+                alt={`${name} character preview`}
                 style={{ width: '150px', borderRadius: '8px' }}
               />
             </div>
@@ -140,7 +142,13 @@ function EditCharacter() {
       </form>
 
       {message && (
-        <p style={{ marginTop: '15px', color: message.includes('success') ? 'green' : 'red' }}>
+        <p
+          style={{
+            marginTop: '15px',
+            color: message.includes('success') ? 'green' : 'red',
+            fontWeight: 'bold',
+          }}
+        >
           {message}
         </p>
       )}

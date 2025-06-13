@@ -6,24 +6,28 @@ function AutocompleteSearchBar() {
   const [suggestions, setSuggestions] = useState([]);
   const [error, setError] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Debounce function to limit API calls
   useEffect(() => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setSuggestions([]);
+      return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
-      if (query.trim()) fetchSuggestions(query);
-    }, 300); // Adjust debounce delay as needed
+      fetchSuggestions(trimmed);
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
   const fetchSuggestions = async (searchTerm) => {
     try {
+      setLoading(true);
       const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
-      if (!response.ok) {
-        setSuggestions([]);
-        return;
-      }
+      if (!response.ok) throw new Error('Failed to fetch');
 
       const data = await response.json();
       const allResults = [
@@ -36,55 +40,66 @@ function AutocompleteSearchBar() {
       ];
 
       setSuggestions(allResults);
+      setError(allResults.length === 0 ? 'No matches found.' : '');
     } catch (err) {
       console.error('Error fetching suggestions:', err.message);
       setSuggestions([]);
+      setError('Failed to fetch results.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSearch = () => {
     if (!query.trim()) return;
-    if (suggestions.length > 0) navigateToResult(suggestions[0]);
+    if (suggestions.length > 0) {
+      navigateToResult(suggestions[0]);
+    } else {
+      setError('No matching item found.');
+    }
   };
 
   const navigateToResult = (result) => {
-    switch (result.type) {
-      case 'character':
-        navigate(`/characters/${result._id}`);
-        break;
-      case 'species':
-        navigate(`/species/${result._id}`);
-        break;
-      case 'civilization':
-        navigate(`/civilizations/${result._id}`);
-        break;
-      case 'weapon':
-        navigate(`/weapons/${result._id}`);
-        break;
-      case 'equipment':
-        navigate(`/equipment/${result._id}`);
-        break;
-      case 'title':
-        navigate(`/titles/${result._id}`);
-        break;
-      default:
-        navigate('/');
-    }
+    const pathMap = {
+      character: `/characters/${result._id}`,
+      species: `/species/${result._id}`,
+      civilization: `/civilizations/${result._id}`,
+      weapon: `/weapons/${result._id}`,
+      equipment: `/equipment/${result._id}`,
+      title: `/titles/${result._id}`,
+    };
+
+    navigate(pathMap[result.type] || '/');
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'ArrowDown') {
-      setActiveIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
+      setActiveIndex(prev => Math.min(prev + 1, suggestions.length - 1));
     } else if (e.key === 'ArrowUp') {
-      setActiveIndex((prev) => Math.max(prev - 1, 0));
-    } else if (e.key === 'Enter' && activeIndex >= 0) {
-      navigateToResult(suggestions[activeIndex]);
+      setActiveIndex(prev => Math.max(prev - 1, 0));
+    } else if (e.key === 'Enter') {
+      if (activeIndex >= 0) {
+        navigateToResult(suggestions[activeIndex]);
+      } else {
+        handleSearch();
+      }
+    } else if (e.key === 'Escape') {
+      setSuggestions([]);
+      setActiveIndex(-1);
     }
   };
 
   return (
     <div style={{ maxWidth: '600px', margin: '40px auto', position: 'relative' }}>
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', background: '#fff', borderRadius: '24px', boxShadow: '0 2px 5px rgba(0,0,0,0.2)', padding: '10px 15px' }}>
+      <div style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        background: '#fff',
+        borderRadius: '24px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        padding: '10px 15px'
+      }}>
         <input
           type="text"
           placeholder="Search characters, species, weapons..."
@@ -117,17 +132,15 @@ function AutocompleteSearchBar() {
           }}
           aria-label="Search"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24"
-            width="24"
-            viewBox="0 0 24 24"
-            fill="#5f6368"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="#5f6368" viewBox="0 0 24 24">
             <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 004.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM10 14a4 4 0 110-8 4 4 0 010 8z" />
           </svg>
         </button>
       </div>
+
+      {loading && (
+        <p style={{ textAlign: 'center', marginTop: '8px', color: '#555' }}>Searching...</p>
+      )}
 
       {suggestions.length > 0 && (
         <ul style={{
@@ -152,9 +165,9 @@ function AutocompleteSearchBar() {
                 cursor: 'pointer',
                 background: activeIndex === index ? '#f1f1f1' : '#fff',
                 transition: 'background 0.2s',
-                fontSize: '16px',  // Increased font size
-                fontWeight: '500',  // Bolder text
-                color: '#333',  // Darker text color for better visibility
+                fontSize: '16px',
+                fontWeight: '500',
+                color: '#333',
               }}
               onMouseEnter={() => setActiveIndex(index)}
             >
@@ -165,7 +178,9 @@ function AutocompleteSearchBar() {
       )}
 
       {error && (
-        <p style={{ color: 'red', marginTop: '6px', fontSize: '14px', textAlign: 'center' }}>{error}</p>
+        <p style={{ color: 'red', marginTop: '6px', fontSize: '14px', textAlign: 'center' }}>
+          {error}
+        </p>
       )}
     </div>
   );

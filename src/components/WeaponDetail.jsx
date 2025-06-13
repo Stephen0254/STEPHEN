@@ -73,4 +73,4 @@ const WeaponDetail = () => {
   );
 };
 
-export default WeaponDetail;
+export default WeaponDetail;  

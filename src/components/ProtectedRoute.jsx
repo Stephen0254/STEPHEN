@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
-function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('token');
+const ProtectedRoute = ({ children }) => {
+  const [checking, setChecking] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
 
-  if (!token) {
-    // Not logged in, redirect to login page
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
 
-  // Logged in, render children components
-  return children;
-}
+    if (token && user) {
+      setAuthorized(true);
+    }
+
+    setChecking(false);
+  }, []);
+
+  if (checking) return <div>Checking access...</div>;
+
+  return authorized ? children : <Navigate to="/login" replace />;
+};
 
 export default ProtectedRoute;

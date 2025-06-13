@@ -17,7 +17,7 @@ function CharacterList({ searchTerm = '' }) {
   }, [location]);
 
   useEffect(() => {
-    fetch('/api/characters')
+    fetch(`${import.meta.env.VITE_API_URL}/api/characters`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch characters');
         return res.json();
@@ -45,7 +45,7 @@ function CharacterList({ searchTerm = '' }) {
     }
 
     try {
-      const res = await fetch(`/api/characters/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/characters/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -71,46 +71,61 @@ function CharacterList({ searchTerm = '' }) {
     char.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const cardStyle = {
-    display: 'block',
-    textDecoration: 'none',
-    color: 'inherit',
-    border: '1px solid #ccc',
-    padding: '10px',
-    borderRadius: '10px',
-    textAlign: 'center',
-    marginBottom: '20px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    transition: 'transform 0.2s ease',
-  };
-
   return (
-    <div style={{ maxWidth: '800px', margin: 'auto' }}>
-      <h2>Character Profiles</h2>
+    <div style={{ maxWidth: '1200px', margin: 'auto', padding: '20px' }}>
+      <h2 style={{ textAlign: 'center' }}>Character Profiles</h2>
+
       {editMessage && (
         <p style={{ color: 'green', textAlign: 'center', fontWeight: 'bold' }}>
           {editMessage}
         </p>
       )}
+
       {filteredCharacters.length === 0 && <p>No characters found.</p>}
-      <ul style={{ listStyleType: 'none', padding: 0 }}>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px',
+          marginTop: '20px',
+        }}
+      >
         {filteredCharacters.map(char => (
-          <li key={char._id}>
-            <Link to={`/character/${char._id}`} style={cardStyle}>
+          <div
+            key={char._id}
+            style={{
+              border: '1px solid #ccc',
+              borderRadius: '10px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Link
+              to={`/character/${char._id}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
               {char.image && (
                 <img
-                  src={`http://localhost:5000${char.image}`} // ✅ Fixed image path
+                  src={`${import.meta.env.VITE_API_URL}${char.image}`}
                   alt={char.name}
-                  style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                 />
               )}
-              <h3>{char.name}</h3>
-              <p><strong>Role:</strong> {char.role}</p>
-              {char.description && (
-                <p style={{ fontStyle: 'italic' }}>{char.description}</p>
-              )}
+              <div style={{ padding: '10px' }}>
+                <h3>{char.name}</h3>
+                <p><strong>Role:</strong> {char.role}</p>
+                {char.description && (
+                  <p style={{ fontStyle: 'italic' }}>{char.description}</p>
+                )}
+              </div>
             </Link>
-            <div style={{ marginTop: '10px', textAlign: 'center' }}>
+
+            <div style={{ display: 'flex', justifyContent: 'space-around', padding: '10px' }}>
               <button
                 onClick={() => handleDelete(char._id)}
                 style={{
@@ -119,7 +134,6 @@ function CharacterList({ searchTerm = '' }) {
                   color: '#fff',
                   border: 'none',
                   borderRadius: '4px',
-                  marginRight: '10px',
                   cursor: 'pointer',
                 }}
               >
@@ -140,9 +154,9 @@ function CharacterList({ searchTerm = '' }) {
                 </button>
               </Link>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

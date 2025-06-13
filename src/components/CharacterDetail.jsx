@@ -14,7 +14,7 @@ const CharacterDetail = () => {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const { data } = await axios.get(`/api/characters/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/characters/${id}`);
         setCharacter(data);
       } catch (err) {
         console.error("Error fetching character:", err);
@@ -29,7 +29,7 @@ const CharacterDetail = () => {
     if (!window.confirm("Are you sure?")) return;
 
     try {
-      await axios.delete(`/api/characters/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/characters/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       alert("Character deleted.");
@@ -52,7 +52,7 @@ const CharacterDetail = () => {
       <h2>{character.name}</h2>
       {character.image && (
         <img
-          src={`/uploads/${character.image}`}
+          src={`${import.meta.env.VITE_API_URL}/uploads/${character.image}`}
           alt={character.name}
           style={{ width: "200px", height: "auto", borderRadius: "6px", marginBottom: "1rem" }}
         />
