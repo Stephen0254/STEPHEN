@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const AddCivilization = () => {
+function AddCivilization() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +33,7 @@ const AddCivilization = () => {
     formData.append('image', image);
 
     try {
-      const response = await fetch(`${API_URL}/api/civilizations`, {
+      const res = await fetch(`${API_URL}/api/civilizations`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -40,36 +41,39 @@ const AddCivilization = () => {
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '❌ Failed to add civilization.');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || '❌ Failed to add civilization.');
       }
 
       setMessage('✅ Civilization added successfully!');
       setName('');
       setDescription('');
       setImage(null);
-    } catch (error) {
-      setMessage(error.message);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err) {
+      setMessage(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: 'auto', padding: '2rem' }}>
+    <div style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
       <h2 style={{ textAlign: 'center' }}>Add New Civilization</h2>
 
       {message && (
-        <div style={{ marginBottom: '1rem', color: message.startsWith('✅') ? 'green' : 'red', textAlign: 'center' }}>
+        <p style={{ marginTop: '10px', color: message.startsWith('✅') ? 'green' : 'red', textAlign: 'center' }}>
           {message}
-        </div>
+        </p>
       )}
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Name:</label>
+        <div style={{ marginBottom: '12px' }}>
+          <label htmlFor="name">Name:</label><br />
           <input
+            id="name"
             type="text"
             value={name}
             onChange={(e) => {
@@ -77,26 +81,30 @@ const AddCivilization = () => {
               setMessage('');
             }}
             required
-            style={{ width: '100%', padding: '10px' }}
+            style={{ width: '100%', padding: '8px' }}
           />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Description:</label>
+        <div style={{ marginBottom: '12px' }}>
+          <label htmlFor="description">Description:</label><br />
           <textarea
+            id="description"
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
               setMessage('');
             }}
+            rows={4}
+            style={{ width: '100%', padding: '8px' }}
             required
-            style={{ width: '100%', padding: '10px', minHeight: '100px' }}
           />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Image:</label>
+        <div style={{ marginBottom: '12px' }}>
+          <label htmlFor="image">Image:</label><br />
           <input
+            id="image"
+            ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={(e) => {
@@ -111,12 +119,12 @@ const AddCivilization = () => {
           type="submit"
           disabled={loading}
           style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: '#222',
+            padding: '10px 20px',
+            backgroundColor: '#1e1e1e',
             color: '#fff',
             border: 'none',
             cursor: 'pointer',
+            width: '100%',
             fontWeight: 'bold',
           }}
         >
@@ -125,6 +133,6 @@ const AddCivilization = () => {
       </form>
     </div>
   );
-};
+}
 
 export default AddCivilization;

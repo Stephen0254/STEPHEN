@@ -87,7 +87,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/characters" element={<CharacterList />} />
-            <Route path="/characters/:id" element={<CharacterDetail />} /> {/* ✅ Updated */}
+            <Route path="/characters/:id" element={<CharacterDetail />} />
             <Route path="/species" element={<SpeciesList />} />
             <Route path="/species/:id" element={<SpeciesDetail />} />
             <Route path="/civilizations" element={<CivilizationList />} />
@@ -106,16 +106,16 @@ function App() {
             <Route path="/add-character" element={<PrivateRoute><AddCharacter /></PrivateRoute>} />
             <Route path="/characters/edit/:id" element={<PrivateRoute><EditCharacter /></PrivateRoute>} />
 
-            <Route path="/add-species" element={<PrivateRoute><AddSpecies /></PrivateRoute>} />
+            <Route path="/species/add" element={<PrivateRoute><AddSpecies /></PrivateRoute>} />
             <Route path="/species/edit/:id" element={<PrivateRoute><EditSpecies /></PrivateRoute>} />
 
-            <Route path="/add-civilization" element={<PrivateRoute><AddCivilization /></PrivateRoute>} />
+            <Route path="/civilizations/add" element={<PrivateRoute><AddCivilization /></PrivateRoute>} />
             <Route path="/civilizations/edit/:id" element={<PrivateRoute><EditCivilization /></PrivateRoute>} />
 
-            <Route path="/add-weapon" element={<PrivateRoute><AddWeapon /></PrivateRoute>} />
+            <Route path="/weapons/add" element={<PrivateRoute><AddWeapon /></PrivateRoute>} />
             <Route path="/weapons/edit/:id" element={<PrivateRoute><EditWeapon /></PrivateRoute>} />
 
-            <Route path="/add-equipment" element={<PrivateRoute><AddEquipment /></PrivateRoute>} />
+            <Route path="/equipment/add" element={<PrivateRoute><AddEquipment /></PrivateRoute>} />
             <Route path="/equipment/edit/:id" element={<PrivateRoute><EditEquipment /></PrivateRoute>} />
 
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />

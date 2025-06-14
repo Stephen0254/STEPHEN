@@ -12,21 +12,20 @@ const AddWeapon = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!name) return setMessage('Name is required.');
     if (!image) return setMessage('Image is required.');
-
-    const user = JSON.parse(localStorage.getItem('user'));
-    const token = user?.token;
-
-    if (!token) {
-      return setMessage('You must be logged in as an admin to add weapons.');
-    }
 
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
     formData.append('image', image);
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user?.token;
+
+    if (!token) {
+      return setMessage('You must be logged in as an admin to add.');
+    }
 
     try {
       setLoading(true);
@@ -40,19 +39,18 @@ const AddWeapon = () => {
         body: formData,
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
+        const data = await res.json();
         throw new Error(data.message || 'Failed to add weapon');
       }
 
-      setMessage('✅ Weapon added successfully!');
+      setMessage('Weapon added successfully!');
       setName('');
       setDescription('');
       setImage(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
-      setMessage(`❌ ${error.message}`);
+      setMessage(error.message);
     } finally {
       setLoading(false);
     }
@@ -61,16 +59,9 @@ const AddWeapon = () => {
   return (
     <div style={{ maxWidth: '500px', margin: 'auto', padding: '20px' }}>
       <h2>Add New Weapon</h2>
-
-      {message && (
-        <p style={{ marginTop: '10px', color: message.startsWith('✅') ? 'green' : 'red' }}>
-          {message}
-        </p>
-      )}
-
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div style={{ marginBottom: '10px' }}>
-          <label>Name:</label>
+          <label>Name:</label><br />
           <input
             type="text"
             value={name}
@@ -84,20 +75,19 @@ const AddWeapon = () => {
         </div>
 
         <div style={{ marginBottom: '10px' }}>
-          <label>Description:</label>
+          <label>Description:</label><br />
           <textarea
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
               setMessage('');
             }}
-            rows={4}
             style={{ width: '100%', padding: '8px' }}
           />
         </div>
 
         <div style={{ marginBottom: '10px' }}>
-          <label>Image:</label>
+          <label>Image:</label><br />
           <input
             ref={fileInputRef}
             type="file"
@@ -110,10 +100,16 @@ const AddWeapon = () => {
           />
         </div>
 
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
+        <button type="submit" disabled={loading}>
           {loading ? 'Adding...' : 'Add Weapon'}
         </button>
       </form>
+
+      {message && (
+        <p style={{ marginTop: '10px', color: message.includes('success') ? 'green' : 'red' }}>
+          {message}
+        </p>
+      )}
     </div>
   );
 };

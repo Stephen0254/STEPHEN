@@ -59,7 +59,7 @@ function AddSpecies() {
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: 'auto', padding: '20px' }}>
+    <div style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
       <h2>Add New Species</h2>
 
       {message && (
@@ -69,9 +69,10 @@ function AddSpecies() {
       )}
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div style={{ marginBottom: '10px' }}>
-          <label>Name:</label>
+        <div style={{ marginBottom: '12px' }}>
+          <label htmlFor="name">Name:</label><br />
           <input
+            id="name"
             type="text"
             value={name}
             onChange={(e) => {
@@ -83,9 +84,10 @@ function AddSpecies() {
           />
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Description:</label>
+        <div style={{ marginBottom: '12px' }}>
+          <label htmlFor="description">Description:</label><br />
           <textarea
+            id="description"
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
@@ -96,9 +98,10 @@ function AddSpecies() {
           />
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Image:</label>
+        <div style={{ marginBottom: '12px' }}>
+          <label htmlFor="image">Image:</label><br />
           <input
+            id="image"
             ref={fileInputRef}
             type="file"
             accept="image/*"
@@ -110,7 +113,11 @@ function AddSpecies() {
           />
         </div>
 
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
+        <button
+          type="submit"
+          disabled={loading}
+          style={{ padding: '10px 20px', cursor: 'pointer' }}
+        >
           {loading ? 'Adding...' : 'Add Species'}
         </button>
       </form>

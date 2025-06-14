@@ -106,7 +106,7 @@ function CharacterList({ searchTerm = '' }) {
             }}
           >
             <Link
-              to={`/character/${char._id}`}
+              to={`/characters/${char._id}`}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               {char.image && (
