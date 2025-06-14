@@ -16,6 +16,8 @@ function Login() {
     setError('');
 
     try {
+      console.log('🔗 Backend URL:', import.meta.env.VITE_API_URL); // ✅ Debug log
+
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/users/login`,
         { email, password }
@@ -27,7 +29,6 @@ function Login() {
       localStorage.setItem('user', JSON.stringify(user));
       window.dispatchEvent(new Event('storage'));
 
-      // Redirect to previous location or default to /profile
       const redirectPath = location.state?.from || '/profile';
       navigate(redirectPath);
     } catch (err) {
