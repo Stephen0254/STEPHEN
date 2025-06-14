@@ -12,20 +12,21 @@ function AddSpecies() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!name) return setMessage('Name is required.');
     if (!image) return setMessage('Image is required.');
-
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('description', description);
-    formData.append('image', image);
 
     const user = JSON.parse(localStorage.getItem('user'));
     const token = user?.token;
 
     if (!token) {
-      return setMessage('You must be logged in as an admin to add.');
+      return setMessage('You must be logged in as an admin to add species.');
     }
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('image', image);
 
     try {
       setLoading(true);
@@ -39,18 +40,19 @@ function AddSpecies() {
         body: formData,
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.message || 'Failed to add species');
       }
 
-      setMessage('Species added successfully!');
+      setMessage('✅ Species added successfully!');
       setName('');
       setDescription('');
       setImage(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
-      setMessage(err.message);
+      setMessage(`❌ ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -59,9 +61,16 @@ function AddSpecies() {
   return (
     <div style={{ maxWidth: '500px', margin: 'auto', padding: '20px' }}>
       <h2>Add New Species</h2>
+
+      {message && (
+        <p style={{ marginTop: '10px', color: message.startsWith('✅') ? 'green' : 'red' }}>
+          {message}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div style={{ marginBottom: '10px' }}>
-          <label>Name:</label><br />
+          <label>Name:</label>
           <input
             type="text"
             value={name}
@@ -75,19 +84,20 @@ function AddSpecies() {
         </div>
 
         <div style={{ marginBottom: '10px' }}>
-          <label>Description:</label><br />
+          <label>Description:</label>
           <textarea
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
               setMessage('');
             }}
+            rows={4}
             style={{ width: '100%', padding: '8px' }}
           />
         </div>
 
         <div style={{ marginBottom: '10px' }}>
-          <label>Image:</label><br />
+          <label>Image:</label>
           <input
             ref={fileInputRef}
             type="file"
@@ -100,16 +110,10 @@ function AddSpecies() {
           />
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
           {loading ? 'Adding...' : 'Add Species'}
         </button>
       </form>
-
-      {message && (
-        <p style={{ marginTop: '10px', color: message.includes('success') ? 'green' : 'red' }}>
-          {message}
-        </p>
-      )}
     </div>
   );
 }

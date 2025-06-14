@@ -14,12 +14,12 @@ const AddEquipment = () => {
 
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.token) {
-      setMessage('You must be logged in as an admin to add.');
+      setMessage('You must be logged in as an admin to add equipment.');
       return;
     }
 
     if (!image) {
-      setMessage('Please select an image.');
+      setMessage('Please select an image for the equipment.');
       return;
     }
 
@@ -40,17 +40,18 @@ const AddEquipment = () => {
         body: formData,
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to add equipment');
+        throw new Error(data.message || 'Failed to add equipment');
       }
 
-      setMessage('Equipment added successfully!');
+      setMessage('✅ Equipment added successfully!');
       setName('');
       setDescription('');
       setImage(null);
     } catch (error) {
-      setMessage(error.message);
+      setMessage(`❌ ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -59,6 +60,13 @@ const AddEquipment = () => {
   return (
     <div style={{ maxWidth: '500px', margin: 'auto' }}>
       <h2>Add New Equipment</h2>
+
+      {message && (
+        <p style={{ color: message.startsWith('✅') ? 'green' : 'red', marginBottom: '10px' }}>
+          {message}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div style={{ marginBottom: '10px' }}>
           <label>Name:</label>
@@ -73,6 +81,7 @@ const AddEquipment = () => {
             style={{ width: '100%', padding: '8px' }}
           />
         </div>
+
         <div style={{ marginBottom: '10px' }}>
           <label>Description:</label>
           <textarea
@@ -82,9 +91,11 @@ const AddEquipment = () => {
               setMessage(null);
             }}
             required
+            rows={4}
             style={{ width: '100%', padding: '8px' }}
           />
         </div>
+
         <div style={{ marginBottom: '10px' }}>
           <label>Image:</label>
           <input
@@ -97,11 +108,11 @@ const AddEquipment = () => {
             required
           />
         </div>
-        <button type="submit" style={{ padding: '10px 20px' }} disabled={loading}>
+
+        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
           {loading ? 'Adding...' : 'Add Equipment'}
         </button>
       </form>
-      {message && <p style={{ marginTop: '10px' }}>{message}</p>}
     </div>
   );
 };
