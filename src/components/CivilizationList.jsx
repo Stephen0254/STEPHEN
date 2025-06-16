@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 function CivilizationList() {
   const [civilizations, setCivilizations] = useState([]);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/civilizations`)
+    fetch(`${API_URL}/api/civilizations`)
       .then(res => res.json())
       .then(data => setCivilizations(data))
       .catch(err => console.error('Error fetching civilizations:', err));
-  }, []);
+  }, [API_URL]);
 
   const handleDelete = async (id) => {
     const storedUser = localStorage.getItem('user');
@@ -24,7 +26,7 @@ function CivilizationList() {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/civilizations/${id}`, {
+      const res = await fetch(`${API_URL}/api/civilizations/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -70,13 +72,13 @@ function CivilizationList() {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 backgroundColor: 'transparent',
-                backdropFilter: 'blur(2px)', // optional for glassmorphism
-                color: '#fff', // optional if background is dark
+                backdropFilter: 'blur(2px)',
+                color: '#fff',
               }}
             >
               {civ.image && (
                 <img
-                  src={`${import.meta.env.VITE_API_URL}${civ.image}`}
+                  src={`${API_URL}/uploads/${civ.image}`}
                   alt={civ.name}
                   style={{ width: '100%', height: '180px', objectFit: 'cover' }}
                 />
