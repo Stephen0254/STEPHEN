@@ -55,7 +55,7 @@ function SpeciesList() {
   };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: 'auto', padding: '1rem' }}>
+    <div style={{ maxWidth: '1000px', margin: 'auto', padding: '1rem', backgroundColor: 'transparent' }}>
       <h2 style={{ textAlign: 'center' }}>Species</h2>
 
       {loading && <p>Loading species...</p>}
@@ -78,7 +78,9 @@ function SpeciesList() {
                 border: '1px solid #ccc',
                 borderRadius: '10px',
                 padding: '15px',
-                backgroundColor: '#f9f9f9',
+                backgroundColor: 'transparent',
+                backdropFilter: 'blur(2px)',
+                color: '#fff',
                 textAlign: 'center',
               }}
             >

@@ -51,13 +51,20 @@ function WeaponList() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '20px auto', padding: '10px' }}>
+    <div style={{ maxWidth: '800px', margin: '20px auto', padding: '10px', backgroundColor: 'transparent' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Weapons</h2>
 
       {weapons.length === 0 ? (
         <p style={{ textAlign: 'center' }}>No weapons found.</p>
       ) : (
-        <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', padding: 0 }}>
+        <ul
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px',
+            padding: 0,
+          }}
+        >
           {weapons.map(weapon => (
             <li
               key={weapon._id}
@@ -66,14 +73,20 @@ function WeaponList() {
                 borderRadius: '8px',
                 padding: '10px',
                 listStyle: 'none',
-                backgroundColor: '#f9f9f9',
+                backgroundColor: 'transparent',
               }}
             >
               {weapon.image && (
                 <img
                   src={`${API_URL}/uploads/${weapon.image}`}
                   alt={weapon.name}
-                  style={{ width: '100%', borderRadius: '6px', marginBottom: '10px' }}
+                  style={{
+                    width: '100%',
+                    height: '180px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    marginBottom: '10px',
+                  }}
                 />
               )}
               <h3>{weapon.name}</h3>

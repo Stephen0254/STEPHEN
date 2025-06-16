@@ -72,7 +72,7 @@ function CharacterList({ searchTerm = '' }) {
   );
 
   return (
-    <div style={{ maxWidth: '1200px', margin: 'auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1200px', margin: 'auto', padding: '20px', backgroundColor: 'transparent' }}>
       <h2 style={{ textAlign: 'center' }}>Character Profiles</h2>
 
       {editMessage && (
@@ -102,7 +102,9 @@ function CharacterList({ searchTerm = '' }) {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              backgroundColor: '#fff',
+              backgroundColor: 'transparent',
+              backdropFilter: 'blur(2px)', // Optional for subtle glass effect
+              color: '#fff', // Optional if your background is dark
             }}
           >
             <Link

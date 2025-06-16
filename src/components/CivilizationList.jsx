@@ -44,7 +44,7 @@ function CivilizationList() {
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: 'auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1200px', margin: 'auto', padding: '20px', backgroundColor: 'transparent' }}>
       <h2 style={{ textAlign: 'center' }}>Civilizations</h2>
 
       {civilizations.length === 0 ? (
@@ -69,7 +69,9 @@ function CivilizationList() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                backgroundColor: '#fff',
+                backgroundColor: 'transparent',
+                backdropFilter: 'blur(2px)', // optional for glassmorphism
+                color: '#fff', // optional if background is dark
               }}
             >
               {civ.image && (
