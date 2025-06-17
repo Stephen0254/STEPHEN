@@ -79,8 +79,8 @@ const Navbar = () => {
       <nav className={`navbar ${darkMode ? 'dark' : 'light'}`}>
         {/* Left: Main Navigation */}
         <div className="nav-links">
-          {['/', '/characters', '/species', '/civilizations', '/weapons', '/equipment'].map((path, idx) => {
-            const labels = ['Home', 'Characters', 'Species', 'Civilizations', 'Weapons', 'Equipment'];
+          {['/', '/characters', '/species', '/civilizations', '/weapons', '/equipment', '/worlds'].map((path, idx) => {
+            const labels = ['Home', 'Characters', 'Species', 'Civilizations', 'Weapons', 'Equipment', 'Worlds'];
             return (
               <Link key={path} to={path} className="nav-link">
                 {labels[idx]}
@@ -98,6 +98,7 @@ const Navbar = () => {
               { path: '/civilizations/add', label: 'Add Civilization' },
               { path: '/weapons/add', label: 'Add Weapon' },
               { path: '/equipment/add', label: 'Add Equipment' },
+              { path: '/add-world', label: 'Add World' }, // ✅ NEW
             ].map(({ path, label }) => (
               <Link key={path} to={path} className="nav-link">
                 {label}

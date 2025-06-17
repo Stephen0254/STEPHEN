@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
@@ -43,6 +42,12 @@ import EquipmentDetail from './components/EquipmentDetail';
 
 // Titles
 import TitleDetail from './components/TitleDetail';
+
+// Worlds / Realms
+import WorldList from './components/WorldList';
+import WorldDetail from './components/WorldDetail';
+import AddWorld from './components/AddWorld';
+import EditWorld from './components/EditWorld';
 
 // Search
 import GlobalSearchBar from './components/GlobalSearchBar';
@@ -101,6 +106,12 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/logout" element={<Logout setUser={setUser} />} />
             <Route path="/search" element={<SearchPage />} />
+
+            {/* Worlds / Realms */}
+            <Route path="/worlds" element={<WorldList />} />
+            <Route path="/worlds/:id" element={<WorldDetail />} />
+            <Route path="/worlds/add" element={<PrivateRoute><AddWorld /></PrivateRoute>} />
+            <Route path="/worlds/edit/:id" element={<PrivateRoute><EditWorld /></PrivateRoute>} />
 
             {/* Protected Routes */}
             <Route path="/add-character" element={<PrivateRoute><AddCharacter /></PrivateRoute>} />
